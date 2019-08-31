@@ -44,16 +44,26 @@ func server() {
 	}
 
 	fmt.Println("Recv Message")
-	buf := make([]byte, 1024)
+	typeBuf := make([]byte, 1024)
 	for {
-		n, err := conn.Read(buf)
+		n, err := conn.Read(typeBuf)
 		if n == 0 {
 			break
 		}
 		if err != nil {
 			fmt.Printf("Read error: %s\n", err)
 		}
-		fmt.Print(string(buf[:n]))
+		fmt.Println(string(typeBuf))
+	}
+	for {
+		n, err := conn.Read(typeBuf)
+		if n == 0 {
+			break
+		}
+		if err != nil {
+			fmt.Printf("Read error: %s\n", err)
+		}
+		fmt.Println(string(typeBuf))
 	}
 }
 
