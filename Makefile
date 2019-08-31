@@ -11,11 +11,11 @@ SRC=src
 
 .PHONY: run_srv
 run_srv:
-	$(GOBIN) run $(SRC)/main.go --server
+	$(GOBIN) run $(SRC)/server/main.go
 
 .PHONY: run_cli
 run_cli:
-	$(GOBIN) run $(SRC)/main.go --client
+	$(GOBIN) run $(SRC)/client/main.go
 
 .PHONY: test
 test:
