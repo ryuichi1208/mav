@@ -30,13 +30,18 @@ func genIpAddr() string {
 }
 
 func openFile(filepath string) {
-	os.OpenFile(filepath, os.O_WRONLY|os.O_CREATE, 0666)
+	_, err := os.OpenFile(filepath, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		return
+	}
 }
 
-func fileOperationIntr(metaFileInfo string) {
+func fileOperationIntr(metaFileInfo string, cnt int) {
 	fileBuf := strings.Split(metaFileInfo, ",")
 	fmt.Println(metaFileInfo)
-	openFile(fileBuf[0])
+	if cnt == 0 {
+		openFile(fileBuf[0])
+	}
 }
 
 func server() {
@@ -57,6 +62,7 @@ func server() {
 
 	fmt.Println("Recv Message")
 	typeBuf := make([]byte, 1024)
+	cnt := 0
 	for {
 		n, err := conn.Read(typeBuf)
 		if n == 0 {
@@ -65,7 +71,8 @@ func server() {
 		if err != nil {
 			fmt.Printf("Read error: %s\n", err)
 		}
-		fileOperationIntr(string(typeBuf))
+		fileOperationIntr(string(typeBuf), cnt)
+		cnt++
 	}
 }
 

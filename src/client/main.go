@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net"
 	"os"
 )
@@ -45,17 +46,20 @@ func genIpAddr() string {
 }
 
 func initFileInfo() {
-	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_APPEND, 0666)
+
+	// ファイルをプロセスへ紐づける
+	file, err := os.Open(filePath)
 	if err != nil {
-		return
+		log.Fatal(err)
 	}
 
 	// ファイルの情報を取得する
 	fileInfo, er := file.Stat()
 	if er != nil {
-		return
+		log.Fatal(err)
 	}
 
+	// ファイルのメタデータを設定する
 	fm.fileName = file.Name()
 	fm.fileParm = "0755"
 	fm.user = 0
@@ -71,7 +75,7 @@ func client() {
 	if err != nil {
 		return
 	}
-	fbuf := make([]byte, 4096)
+	fbuf := make([]byte, fm.fileSize+1024)
 	defer f.Close()
 
 	for {
@@ -91,6 +95,7 @@ func client() {
 	}
 	defer conn.Close()
 
+	// 送信用のファイルの情報を生成
 	meta := fmt.Sprintf("%s,%s,%d,%d,%d,%d\n",
 		fm.fileName, fm.fileParm, fm.user, fm.group, fm.fileSize, fm.fileType)
 	buf := new(bytes.Buffer)
@@ -99,6 +104,7 @@ func client() {
 		panic(err)
 	}
 
+	// バッファから読み取り
 	readBuf, _ := ioutil.ReadAll(buf)
 
 	conn.Write(readBuf)
