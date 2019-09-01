@@ -67,6 +67,23 @@ func initFileInfo() {
 func client() {
 	initFileInfo()
 
+	f, err := os.Open(filePath)
+	if err != nil {
+		return
+	}
+	fbuf := make([]byte, 4096)
+	defer f.Close()
+
+	for {
+		n, err := f.Read(fbuf)
+		if n == 0 {
+			break
+		}
+		if err != nil {
+			break
+		}
+	}
+
 	conn, err := net.Dial("tcp", genIpAddr())
 	if err != nil {
 		fmt.Printf("Dial error: %s\n", err)
@@ -85,7 +102,7 @@ func client() {
 	readBuf, _ := ioutil.ReadAll(buf)
 
 	conn.Write(readBuf)
-	conn.Write([]byte("aaa"))
+	conn.Write(fbuf)
 }
 
 func main() {

@@ -35,6 +35,7 @@ func openFile(filepath string) {
 
 func fileOperationIntr(metaFileInfo string) {
 	fileBuf := strings.Split(metaFileInfo, ",")
+	fmt.Println(metaFileInfo)
 	openFile(fileBuf[0])
 }
 
@@ -65,17 +66,6 @@ func server() {
 			fmt.Printf("Read error: %s\n", err)
 		}
 		fileOperationIntr(string(typeBuf))
-	}
-
-	for {
-		n, err := conn.Read(typeBuf)
-		if n == 0 {
-			break
-		}
-		if err != nil {
-			fmt.Printf("Read error: %s\n", err)
-		}
-		fmt.Println(string(typeBuf))
 	}
 }
 
