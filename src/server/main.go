@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"net"
+	"os"
+	"strings"
 )
 
 type ServerInfo struct {
@@ -25,6 +27,15 @@ func optParse() {
 func genIpAddr() string {
 	ipaddr := fmt.Sprintf("%s:%d", si.ipAddr, si.port)
 	return ipaddr
+}
+
+func openFile(filepath string) {
+	os.OpenFile(filepath, os.O_WRONLY|os.O_CREATE, 0666)
+}
+
+func fileOperationIntr(metaFileInfo string) {
+	fileBuf := strings.Split(metaFileInfo, ",")
+	openFile(fileBuf[0])
 }
 
 func server() {
@@ -53,8 +64,9 @@ func server() {
 		if err != nil {
 			fmt.Printf("Read error: %s\n", err)
 		}
-		fmt.Println(string(typeBuf))
+		fileOperationIntr(string(typeBuf))
 	}
+
 	for {
 		n, err := conn.Read(typeBuf)
 		if n == 0 {

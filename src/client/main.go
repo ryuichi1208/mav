@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net"
-	"unsafe"
+	"os"
 )
 
 type ServerInfo struct {
@@ -21,7 +21,7 @@ type fileMeta struct {
 	fileParm string
 	user     int
 	group    int
-	fileSize int
+	fileSize int64
 	fileType int
 }
 
@@ -45,11 +45,22 @@ func genIpAddr() string {
 }
 
 func initFileInfo() {
-	fm.fileName = "./fileA"
+	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		return
+	}
+
+	// ファイルの情報を取得する
+	fileInfo, er := file.Stat()
+	if er != nil {
+		return
+	}
+
+	fm.fileName = file.Name()
 	fm.fileParm = "0755"
 	fm.user = 0
 	fm.group = 0
-	fm.fileSize = 1024
+	fm.fileSize = fileInfo.Size()
 	fm.fileType = 1
 }
 
@@ -78,9 +89,9 @@ func client() {
 }
 
 func main() {
-	structSize := unsafe.Sizeof(si)
-	fmt.Println(structSize, filePath)
+	// オプション解析
 	optParse()
 
+	// ファイル操作のエントリポイント
 	client()
 }
