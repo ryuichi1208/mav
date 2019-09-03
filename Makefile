@@ -8,6 +8,7 @@ GOOS=$(shell go env GOOS)
 GOARCH=$(shell go env GOARCH)
 
 SRC=src
+BIN=bin
 
 .PHONY: run_srv
 run_srv:
@@ -16,6 +17,11 @@ run_srv:
 .PHONY: run_cli
 run_cli:
 	$(GOBIN) run $(SRC)/client/main.go
+
+.PHONY: build
+build:
+	cd $(SRC)/client && $(GOBIN) build -o ../../bin/client
+	cd $(SRC)/server && $(GOBIN) build -o ../../bin/server
 
 .PHONY: test
 test:
@@ -27,4 +33,4 @@ install:
 
 .PHONY: clean
 clean:
-	:
+	rm -f $(BIN)/client && rm -f $(BIN)/server

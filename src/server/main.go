@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"strings"
+	"time"
 )
 
 type ServerInfo struct {
@@ -16,9 +17,18 @@ type ServerInfo struct {
 
 var si ServerInfo
 
+func getTime() time.Time {
+	return time.Now()
+}
+
 func optParse() {
 	flag.StringVar(&si.ipAddr, "ipaddr", "0.0.0.0", "help message for \"s\" option")
 	flag.IntVar(&si.port, "port", 8080, "help message for \"i\" option (default 1234)")
+
+	t := getTime()
+	fmt.Println("[INFO] DATE :", t)
+	fmt.Println("[INFO] Accept :", si.ipAddr)
+	fmt.Println("[INFO] Port :", si.port)
 
 	flag.Parse()
 
@@ -37,11 +47,12 @@ func openFile(filepath string) {
 }
 
 func fileOperationIntr(metaFileInfo string, cnt int) {
-	fileBuf := strings.Split(metaFileInfo, ",")
-	fmt.Println(metaFileInfo)
 	if cnt == 0 {
+		fileBuf := strings.Split(metaFileInfo, ",")
+		fmt.Println("[INFO]", metaFileInfo)
 		openFile(fileBuf[0])
 	}
+	fmt.Println(metaFileInfo)
 }
 
 func server() {
@@ -52,7 +63,6 @@ func server() {
 		return
 	}
 	defer listener.Close()
-	fmt.Println("")
 
 	conn, err := listener.Accept()
 	if err != nil {
@@ -77,8 +87,9 @@ func server() {
 }
 
 func main() {
+	// オプション解析
 	optParse()
 
-	fmt.Println("Server")
+	// サービス起動処理のエントリポイント
 	server()
 }
