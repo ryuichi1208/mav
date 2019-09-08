@@ -22,6 +22,7 @@ run_cli:
 build:
 	cd $(SRC)/client && $(GOBIN) build -o ../../bin/client
 	cd $(SRC)/server && $(GOBIN) build -o ../../bin/server
+	cd $(SRC)/tmp && $(GOBIN) build -o ../../bin/echo
 
 .PHONY: test
 test:
@@ -33,4 +34,4 @@ install:
 
 .PHONY: clean
 clean:
-	rm -f $(BIN)/client && rm -f $(BIN)/server
+	rm -f $(BIN)/client && rm -f $(BIN)/server && rm -f $(BIN)/echo
