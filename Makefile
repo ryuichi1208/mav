@@ -1,28 +1,34 @@
 NAME     := mav
-VERSION  := v0.0.1
+VERSION  := v0.0.2
 REVISION := $(shell git rev-parse --short HEAD)
 
-GOBIN=$(shell which go)
 GOVERSION=$(shell go version)
 GOOS=$(shell go env GOOS)
 GOARCH=$(shell go env GOARCH)
+GOBUILD_ENV=$(GOOS=linux GOARCH=amd64)
 
-SRC=src
-BIN=bin
+GO_CMD=$(shell which go)
+GO_SRC=$(shell pwd)/src
+GO_BIN=$(shell pwd)/bin
+
+export GO111MODULE=on
+
+.PHONY: init
+init: clean
+
+.PHONY: build
+build: init
+	cd $(GO_SRC)/client && $(GO_CMD) build -o ../../bin/client
+	cd $(GO_SRC)/server && $(GO_CMD) build -o ../../bin/server
+	cd $(GO_SRC)/tmp && $(GO_CMD) build -o ../../bin/echo
 
 .PHONY: run_srv
 run_srv:
-	$(GOBIN) run $(SRC)/server/main.go
+	$(GO_CMD) run $(GO_SRC)/server/main.go
 
 .PHONY: run_cli
 run_cli:
-	$(GOBIN) run $(SRC)/client/main.go
-
-.PHONY: build
-build:
-	cd $(SRC)/client && $(GOBIN) build -o ../../bin/client
-	cd $(SRC)/server && $(GOBIN) build -o ../../bin/server
-	cd $(SRC)/tmp && $(GOBIN) build -o ../../bin/echo
+	$(GO_CMD) run $(GO_SRC)/client/main.go
 
 .PHONY: test
 test:
@@ -32,6 +38,10 @@ test:
 install:
 	:
 
+.PHONY: env
+env:
+	$(GO_CMD) env
+
 .PHONY: clean
 clean:
-	rm -f $(BIN)/client && rm -f $(BIN)/server && rm -f $(BIN)/echo
+	rm -f $(GO_BIN)/^[a-z]+
